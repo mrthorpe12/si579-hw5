@@ -111,4 +111,41 @@ function addToSavedWords(word) {
 
 // Add additional functions/callbacks here.
 
+function rhymeHandler() {
+    outputDescription.innerHTML = `Words that rhyme with ${wordInput.value}`;
+    datamuseRequest(getDatamuseRhymeUrl(wordInput.value), (result) => {
+
+        groupedResult = groupBy(result, 'numSyllables');
+        if (Object.keys(groupedResult).length == 0) {
+            wordOutput.value = "no results";
+        } else {
+            for (let group in groupedResult) {
+                let wordGroup = groupedResult[group];
+                const groupHeader = document.createElement('h3');
+                groupHeader.innerHTML = `Syllables: ${wordGroup[0].numSyllables}`
+                wordOutput.append(groupHeader);
+
+                for (let item in wordGroup) {
+                    const listItem = document.createElement('li');
+                    const saveButton = document.createElement('button');
+                    saveButton.innerHTML = 'Save';
+                    saveButton.style.backgroundColor = 'green';
+
+                    listItem.append(wordGroup[item].word);
+                    listItem.append(saveButton);
+                    wordOutput.append(listItem);
+                }
+            }
+
+        }
+    });
+}
+
 // Add event listeners here.
+
+showRhymesButton.addEventListener('click', rhymeHandler, false);
+wordInput.addEventListener('keydown', (e) => {
+    if (e.key == "Enter") {
+        rhymeHandler();
+    }
+}, false);
