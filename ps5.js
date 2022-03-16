@@ -47,6 +47,7 @@ const savedWords = document.querySelector('#saved_words');
 
 // Stores saved words.
 const savedWordsArray = [];
+savedWords.innerHTML = "(none)";
 
 /**
  * Makes a request to Datamuse and updates the page with the
@@ -105,13 +106,11 @@ function getDatamuseSimilarToUrl(ml) {
  * @param {string} word
  *   The word to add.
  */
-const wordList = new Array();
-
 function addToSavedWords(word) {
     savedWords.innerHTML = "";
-    wordList.push(word);
-    wordList.join();
-    savedWords.append(wordList);
+    savedWordsArray.push(word);
+    savedWordsArray.join();
+    savedWords.append(savedWordsArray);
 }
 
 // Add additional functions/callbacks here.
