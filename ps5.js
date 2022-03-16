@@ -105,8 +105,13 @@ function getDatamuseSimilarToUrl(ml) {
  * @param {string} word
  *   The word to add.
  */
+const wordList = new Array();
+
 function addToSavedWords(word) {
-    // You'll need to finish this...
+    savedWords.innerHTML = "";
+    wordList.push(word);
+    wordList.join();
+    savedWords.append(wordList);
 }
 
 // Add additional functions/callbacks here.
@@ -117,7 +122,7 @@ function rhymeHandler() {
 
         groupedResult = groupBy(result, 'numSyllables');
         if (Object.keys(groupedResult).length == 0) {
-            wordOutput.value = "no results";
+            wordOutput.value = "(no results)";
         } else {
             for (let group in groupedResult) {
                 let wordGroup = groupedResult[group];
@@ -128,10 +133,14 @@ function rhymeHandler() {
                 for (let item in wordGroup) {
                     const listItem = document.createElement('li');
                     const saveButton = document.createElement('button');
+                    const spanItem = document.createElement('span');
+
+                    saveButton.className = 'save';
                     saveButton.innerHTML = 'Save';
                     saveButton.style.backgroundColor = 'green';
 
-                    listItem.append(wordGroup[item].word);
+                    spanItem.textContent = wordGroup[item].word;
+                    listItem.append(spanItem);
                     listItem.append(saveButton);
                     wordOutput.append(listItem);
                 }
@@ -139,13 +148,53 @@ function rhymeHandler() {
 
         }
     });
+
+    wordInput.innerHTML = "";
+    wordOutput.textContent = "";
+}
+
+function synonymHandler() {
+    outputDescription.innerHTML = `Words with a similar meaning to ${wordInput.value}`;
+    datamuseRequest(getDatamuseSimilarToUrl(wordInput.value), (result) => {
+        if (Object.keys(result).length == 0) {
+            wordOutput.value = "(no results)";
+        } else {
+            for (let item in result) {
+                const listItem = document.createElement('li');
+                const saveButton = document.createElement('button');
+                const spanItem = document.createElement('span');
+
+                saveButton.className = 'save';
+                saveButton.innerHTML = 'Save';
+                saveButton.style.backgroundColor = 'green';
+
+                spanItem.textContent = result[item].word;
+                listItem.append(spanItem);
+                listItem.append(saveButton);
+                wordOutput.append(listItem);
+            }
+        }
+    });
+
+    wordInput.innerHTML = "";
+    wordOutput.textContent = "";
 }
 
 // Add event listeners here.
 
 showRhymesButton.addEventListener('click', rhymeHandler, false);
+showSynonymsButton.addEventListener('click', synonymHandler, false);
+
 wordInput.addEventListener('keydown', (e) => {
     if (e.key == "Enter") {
         rhymeHandler();
     }
 }, false);
+
+wordOutput.addEventListener('click', (e) => {
+    if (e.target.className == 'save') {
+        // console.log(e.target.parentElement.children[0].innerHTML);
+        input = e.target.parentElement.children[0].innerHTML;
+        addToSavedWords(input);
+    }
+})
